@@ -8,47 +8,55 @@
 ***************************************************************************/
 """
 
-import psutil
-# from validation import Validate
+import pygame
+from src.system import System_Info
+from src.components import Elements_Components
+# from FRANCISCO_CAMELLO_PB_TP2.src.components import Components
 
-class Main():
-    """ This function draws squares side by side. """
+
+class Info_Screen():
+    """ Docstring """
 
     def __init__(self):
-        """ Constructor. """
+        """ Constructor """
+        pygame.init()
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
+        self.SCREEN = pygame.display.set_mode(
+            (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.FPS = 60
+        self.FPSCLOCK = pygame.time.Clock()
+        self.DISPLAY_NAME = pygame.display.set_caption('Análise do Sistema')
+        self.finish = False
+        self.count = 60
 
-        self.men = 0
+    def init_game(self):
+        """ Docstring """
+
+        while not self.finish:
+            # Checar os eventos do mouse aqui:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finish = True
+
+            if self.count == 60:
+                Elements_Components().shows_memory_usage(
+                    self.SCREEN, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, System_Info().memory()[4])
+                Elements_Components().shows_cpu_usage(
+                    self.SCREEN, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, System_Info()._cpu()[2])
+                Elements_Components().shows_disk_usage(
+                    self.SCREEN, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, System_Info()._disk_usage())
+
+                self.count = 0
+
+            # Atualiza o desenho na tela
+            pygame.display.update()
+
+            self.count += 1
+            # 60 frames por segundo
+            self.FPSCLOCK.tick(self.FPS)
+        # Finaliza a janela
+        pygame.display.quit()
 
 
-    def memory(self):
-        """ This function receives the input data from users. """
-
-        self.men = psutil.virtual_memory()
-        total = (self.men.total)/1024/1024/1024
-        available = (self.men.available)/1024/1024/1024
-        used = (self.men.used)/1024/1024/1024
-        free = (self.men.free)/1024/1024/1024
-        percent = self.men.percent
-        print('  Memory','---' * 25, sep='\n')
-        print('{1}Total physical memory: {0} Gb'.format(total,' '*3))
-        print('{1}Total available memory: {0} Gb'.format(available,' '*3))
-        print('{1}Total used memory: {0} Gb'.format(used,' '*3))
-        print('{1}Memory percent used: {0} %'.format(percent,' '*3))
-        print('{1}Total free memory: {0} Gb'.format(free,' '*3))
-
-
-
-    def process_data(self):
-        """ This function process the input data from init_class. """
-
-
-    def print_result(self):
-        """ This is a printer! It prints. """
-
-        print('===' * 25, 'PC Analysis'.center(75), '===' * 25, sep='\n')
-        self.memory()
-        print('---' * 25, 'Analysis completed successfully!'.center(75), '---' *
-              25, 'Aluno: Francisco Camello'.rjust(75), sep="\n")
-
-
-Main().print_result()
+Info_Screen().init_game()
